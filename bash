@@ -34,77 +34,20 @@ sudo nano /etc/modprobe.d/nvidia-options.conf
     #options nvidia-current NVreg_EnableS0ixPowerManagement=1
 
 
-sudo echo 'GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX nvidia-drm.modeset=1"' > /etc/default/grub.d/nvidia-modeset.cfg
+sudo nano /etc/default/grub.d/nvidia-modeset.cfg
+  GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX nvidia-drm.modeset=1"
 sudo apt install nvidia-suspend-common
 systemctl enable nvidia-suspend.service
 systemctl enable nvidia-hibernate.service
 systemctl enable nvidia-resume.service
 
 Timesync
-sudo systemctl start systemd-timesyncd
-sudo apt install sudo systemd-timesyncd
-sudo systemctl start systemd-timesyncd
-sudo systemctl status systemd-timesyncd
-timedatectl
-
-
-
-sudo apt update
-sudo apt install nvidia-driver firmware-misc-nonfree
+  sudo apt install sudo systemd-timesyncd
+  sudo systemctl start systemd-timesyncd
+  sudo systemctl status systemd-timesyncd
+  timedatectl
 sudo reboot
-sudo cat /sys/module/nvidia_drm/parameters/modeset
-sudo echo "options nvidia-drm modeset=1" >> /etc/modprobe.d/nvidia-options.conf
-sudo echo "options nvidia NVreg_PreserveVideoMemoryAllocations=1" >> /etc/modprobe.d/nvidia-options.conf
-echo 'GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX nvidia-drm.modeset=1"' > /etc/default/grub.d/nvidia-modeset.cfg
-sudo echo 'GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX nvidia-drm.modeset=1"' > /etc/default/grub.d/nvidia-modeset.cfg
-sudo apt install nvidia-suspend-common
-systemctl enable nvidia-suspend.service
-systemctl enable nvidia-hibernate.service
-systemctl enable nvidia-resume.service
 
-Timesync
-sudo systemctl start systemd-timesyncd
-sudo apt install sudo systemd-timesyncd
-sudo systemctl start systemd-timesyncd
-sudo systemctl status systemd-timesyncd
-timedatectl
-
-
-
-
-
-
-
-
-
-sudo deb http://deb.debian.org/debian/ bookworm main contrib non-free non-free-firmware
-sudo apt update
-sudo apt install nvidia-driver firmware-misc-nonfree
-sudo reboot
-cat /sys/module/nvidia_drm/parameters/modeset
-sudo cat /sys/module/nvidia_drm/parameters/modeset
-sudo nano /etc/modprobe.d/nvidia-options.conf 
-sudo reboot
-sudo cat /sys/module/nvidia_drm/parameters/modeset
-sudo systemctl start systemd-timesyncd
-sudo apt install sudo systemd-timesyncd
-sudo systemctl start systemd-timesyncd
-sudo systemctl status systemd-timesyncd
-timedatectl
-gfio
-sudo apt install canberra-gtk-module
-sudo gfio
-cd ..
-fallocate -l 10G gentoo_root.img
-ls
-cd home/alex/
-fallocate -l 10G gentoo_root.img
-ls
-ls -al
-sudo cp /home/alex/gentoo_root.img /data/
-sudo chown /data alex
-sudo chown alex /data
-exit
 sudo apt install linux-headers-amd64
 sudo apt install -t stable-backports zfsutils-linux
 ls -l /dev/disk/by-id/
