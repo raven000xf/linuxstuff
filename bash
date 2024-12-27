@@ -1,3 +1,82 @@
+Graphics
+
+/etc/apt/source.list 
+# See https://wiki.debian.org/SourcesList for more information.
+deb https://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+deb-src https://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+
+deb https://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmwa>
+deb-src https://security.debian.org/debian-security bookworm-security main contrib non-free non-free-fi>
+
+deb https://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+deb-src https://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+
+# Backports allow you to install newer versions of software made available for this release
+deb https://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
+deb-src https://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
+
+sudo apt update
+sudo apt install nvidia-driver firmware-misc-nonfree
+sudo reboot
+sudo cat /sys/module/nvidia_drm/parameters/modeset
+sudo nano /etc/modprobe.d/nvidia-options.conf 
+  #options nvidia-current NVreg_DeviceFileUID=0 NVreg_DeviceFileGID=44 NVreg_DeviceFileMode=0660
+
+    # To grant performance counter access to unprivileged users, uncomment the following line:
+    #options nvidia-current NVreg_RestrictProfilingToAdminUsers=0
+
+    # Uncomment to enable this power management feature:
+    options nvidia-current NVreg_PreserveVideoMemoryAllocations=1
+
+    #for wayland
+    options nvidia-drm modeset=1
+    # Uncomment to enable this power management feature:
+    #options nvidia-current NVreg_EnableS0ixPowerManagement=1
+
+
+sudo echo 'GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX nvidia-drm.modeset=1"' > /etc/default/grub.d/nvidia-modeset.cfg
+sudo apt install nvidia-suspend-common
+systemctl enable nvidia-suspend.service
+systemctl enable nvidia-hibernate.service
+systemctl enable nvidia-resume.service
+
+Timesync
+sudo systemctl start systemd-timesyncd
+sudo apt install sudo systemd-timesyncd
+sudo systemctl start systemd-timesyncd
+sudo systemctl status systemd-timesyncd
+timedatectl
+
+
+
+sudo apt update
+sudo apt install nvidia-driver firmware-misc-nonfree
+sudo reboot
+sudo cat /sys/module/nvidia_drm/parameters/modeset
+sudo echo "options nvidia-drm modeset=1" >> /etc/modprobe.d/nvidia-options.conf
+sudo echo "options nvidia NVreg_PreserveVideoMemoryAllocations=1" >> /etc/modprobe.d/nvidia-options.conf
+echo 'GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX nvidia-drm.modeset=1"' > /etc/default/grub.d/nvidia-modeset.cfg
+sudo echo 'GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX nvidia-drm.modeset=1"' > /etc/default/grub.d/nvidia-modeset.cfg
+sudo apt install nvidia-suspend-common
+systemctl enable nvidia-suspend.service
+systemctl enable nvidia-hibernate.service
+systemctl enable nvidia-resume.service
+
+Timesync
+sudo systemctl start systemd-timesyncd
+sudo apt install sudo systemd-timesyncd
+sudo systemctl start systemd-timesyncd
+sudo systemctl status systemd-timesyncd
+timedatectl
+
+
+
+
+
+
+
+
+
 sudo deb http://deb.debian.org/debian/ bookworm main contrib non-free non-free-firmware
 sudo apt update
 sudo apt install nvidia-driver firmware-misc-nonfree
