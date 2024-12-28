@@ -60,19 +60,8 @@ ZFS
   sudo zfs set atime=off tank
   sudo zfs set xattr=sa tank
 
-
-sudo dpkg ~/Downloads/veeam-release-deb_1.0.9_amd64.deb 
-sudo apt install ~/Downloads/veeam-release-deb_1.0.9_amd64.deb 
-veaam
-veeamconfig
-sudp veeamconfig
-sudo veeamconfig
-sudo veaam
-sudo apt install veaam
-veeam
-sudo dpkg -i ./veeam-release* && apt-get update
-dpkg -i ./veeam-release* && apt-get update
-sudo dpkg -i ./veeam-release* && apt-get update
+Veeam
+https://download2.veeam.com/VAL/v6/veeam-release-deb_1.0.9_amd64.deb
 sudo dpkg -i ~/Downloads/veeam-release* && apt-get update
 sudo apt-get install blksnap veeam
 sudo apt remove ~/Downloads/veeam-release-deb_1.0.9_amd64.deb 
