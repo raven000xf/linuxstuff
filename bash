@@ -56,9 +56,17 @@ ZFS
   sudo zpool create -f -o ashift=12 tank raidz ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1269446 ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1285642 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E4VYK2 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E034TL
   sudo zfs set compression=on tank
   mkdir -p ~/data
-  sudo zfs create -o mountpoint=/data tank/data
-  sudo zfs set atime=off tank
-  sudo zfs set xattr=sa tank
+  #Perfomance and options for Shares -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed compression=on
+  sudo zfs create -o mountpoint=/data -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank/data
+
+  SMB Share 
+  sudo apt install samba
+  Configure a very simiple CIFS share (read/write to 192.168.0.0/24, read only to 10.0.0.0/8):
+
+    zfs set mountpoint=/data tank/data
+    zfs set sharesmb=on tank/data
+    zfs share tank/data
+
 
 Veeam
 https://download2.veeam.com/VAL/v6/veeam-release-deb_1.0.9_amd64.deb
@@ -66,4 +74,5 @@ sudo dpkg -i ~/Downloads/veeam-release*
 sudo apt update
 sudo apt install blksnap veeam
 sudo veeam
+sudo apt install rsync
 
