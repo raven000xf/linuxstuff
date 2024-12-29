@@ -56,16 +56,40 @@ ZFS
   sudo zpool create -f -o ashift=12 tank raidz ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1269446 ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1285642 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E4VYK2 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E034TL
   sudo zfs set compression=on tank
   mkdir -p ~/data
-  #Perfomance and options for Shares -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed compression=on
-  sudo zfs create -o mountpoint=/data -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank/data
+  #Perfomance and options for Shares -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed compression=on -o recordsize=1m
+    #recordsize 	64KiB 	Smaller record sizes for databases (match the database block size)
+    #recordsize 	128Kib 	Standard usage (mixture of file sizes)
+    #recordsize 	1Mb 	Recommended for large files
+  sudo zfs create -o mountpoint=~/data -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank/data
+  sudo zfs create -o mountpoint=~/data/largefiles -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on -o recordsize=1m tank/data/largefiles
+  sudo chown -cR $USER  ~/data
 
-  SMB Share 
-  sudo apt install samba
-  Configure a very simiple CIFS share (read/write to 192.168.0.0/24, read only to 10.0.0.0/8):
+SMB Shares
+  sudo apt install samba cifs-utils smbclient
+  #add user
+  sudo smbpasswd -a $USER
+  #show users
+  sudo pdbedit -w -L
 
-    zfs set mountpoint=/data tank/data
-    zfs set sharesmb=on tank/data
-    zfs share tank/data
+  sudo nano /etc/samba/smb.conf
+  [data]
+    comment =data in zfs pool tank and dataset data
+    writeable = yes
+    path = /home/alex/data
+    guest ok = no
+    valid users = alex
+  # Rechte bei neuen Dateien/Verzeichnissen beschränken ("maskieren") & use alex >
+    create mask = 0664
+    directory mask = 0775
+    force user = alex
+
+  
+  #reload config by 
+  sudo smbcontrol all reload-config
+  #or restart service
+  sudo systemctl restart smbd.service
+
+  
 
 
 Veeam
