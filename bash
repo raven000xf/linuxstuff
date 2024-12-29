@@ -62,21 +62,8 @@ ZFS
 
 Veeam
 https://download2.veeam.com/VAL/v6/veeam-release-deb_1.0.9_amd64.deb
-sudo dpkg -i ~/Downloads/veeam-release* && apt-get update
-sudo apt-get install blksnap veeam
-sudo apt remove ~/Downloads/veeam-release-deb_1.0.9_amd64.deb 
-sudo apt autoremove
-sudo dpkg -i ~/Downloads/veeam-release* && apt-get update
+sudo dpkg -i ~/Downloads/veeam-release*
 sudo apt update
-sudo apt-get install blksnap veeam
-veeam
-sudoveeam
+sudo apt install blksnap veeam
 sudo veeam
-sudo apt install efibootmgr
-efibootmgr -v
-ls sys/firmware/efi
-sudo ls sys/firmware/efi
-/sys/firmware/efi/
-ls /sys/firmware/efi
-sudo efibootmgr
-sudo efibootmgr -v
+
