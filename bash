@@ -41,6 +41,19 @@ systemctl enable nvidia-suspend.service
 systemctl enable nvidia-hibernate.service
 systemctl enable nvidia-resume.service
 
+XRDP
+sudo apt install xrdp
+sudo systemctl is-enabled xrdp
+sudo systemctl status xrdp
+#blank screen
+sudo nano /etc/xrdp/startwm.sh
+  export $(dbus-launch)
+  export GNOME_SHELL_SESSION_MODE=debian
+  export XDG_CURRENT_DESKTOP=debian:GNOME
+#allow colormanagment for all
+sudo sed -i 's/<allow_inactive>no</<allow_inactive>yes</' /usr/share/polkit-1/actions/org.freedesktop.color.policy
+sudo sed -i 's/<allow_any>.*</<allow_any>yes</' /usr/share/polkit-1/actions/org.freedesktop.color.policy
+
 Timesync
   sudo apt install sudo systemd-timesyncd
   sudo systemctl start systemd-timesyncd
@@ -99,4 +112,9 @@ sudo apt update
 sudo apt install blksnap veeam
 sudo veeam
 sudo apt install rsync
+
+
+
+
+
 
