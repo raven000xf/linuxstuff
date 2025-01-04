@@ -54,6 +54,18 @@ sudo nano /etc/xrdp/startwm.sh
 sudo sed -i 's/<allow_inactive>no</<allow_inactive>yes</' /usr/share/polkit-1/actions/org.freedesktop.color.policy
 sudo sed -i 's/<allow_any>.*</<allow_any>yes</' /usr/share/polkit-1/actions/org.freedesktop.color.policy
 
+Disable Suspension
+sudo nano /etc/systemd/sleep.conf
+  [Sleep]
+  #AllowSuspend=yes
+  #AllowHibernation=yes
+  #AllowSuspendThenHibernate=yes
+  #AllowHybridSleep=yes
+  AllowSuspend=no 
+  AllowHibernation=no 
+  AllowSuspendThenHibernate=no  
+  AllowHybridSleep=no 
+
 Timesync
   sudo apt install sudo systemd-timesyncd
   sudo systemctl start systemd-timesyncd
