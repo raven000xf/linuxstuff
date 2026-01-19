@@ -78,7 +78,11 @@ ZFS
   sudo apt install -t stable-backports zfsutils-linux
   ls -l /dev/disk/by-id/
   ls -l /dev/disk/by-path/
+  #RAIDZ
   sudo zpool create -f -o ashift=12 tank raidz ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1269446 ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1285642 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E4VYK2 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E034TL
+  #Mirror
+  sudo zpool create -f -o ashift=12 tank mirror ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1269446 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E034TL
+
   sudo zfs set compression=on tank
   mkdir -p ~/data
   #Perfomance and options for Shares -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed compression=on -o recordsize=1m
