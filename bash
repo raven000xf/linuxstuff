@@ -91,6 +91,8 @@ ZFS
     #recordsize 	1Mb 	Recommended for large files
   sudo zfs create -o mountpoint=~/data -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank/data
   sudo zfs create -o mountpoint=~/data/largefiles -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on -o recordsize=1m tank/data/largefiles
+  #allow direct i/o for veeam
+  zfs set direct=standard tank/data/largefiles 
   sudo chown -cR $USER  ~/data
 
 SMB Shares
@@ -126,6 +128,8 @@ https://download2.veeam.com/VAL/v6/veeam-release-deb_1.0.9_amd64.deb
 sudo dpkg -i ~/Downloads/veeam-release*
 sudo apt update
 sudo apt install blksnap veeam
+#for recovery iso gen 
+sudo apt install xorriso
 sudo veeam
 sudo apt install rsync
 
