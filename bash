@@ -91,8 +91,6 @@ ZFS
     #recordsize 	1Mb 	Recommended for large files
   sudo zfs create -o mountpoint=~/data -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank/data
   sudo zfs create -o mountpoint=~/data/largefiles -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on -o recordsize=1m tank/data/largefiles
-  #allow direct i/o for veeam
-  zfs set direct=standard tank/data/largefiles 
   sudo chown -cR $USER  ~/data
 
 SMB Shares
@@ -132,6 +130,13 @@ sudo apt install blksnap veeam
 sudo apt install xorriso
 sudo veeam
 sudo apt install rsync
+sudo systemctl edit veeamservice
+#add to 
+nano /etc/veeam/veeam.ini
+      [Backup]
+      UseDirectIO=0
+      UseAIO=0
+      DataMoverLegacyIOMode=1
 
 
 
