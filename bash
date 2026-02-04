@@ -78,33 +78,36 @@ ZFS
   sudo apt install -t stable-backports zfsutils-linux
   ls -l /dev/disk/by-id/
   ls -l /dev/disk/by-path/
-  #RAIDZ
-  sudo zpool create -f -o ashift=12 tank raidz ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1269446 ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1285642 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E4VYK2 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E034TL
-  #Mirror
+  # 1. Pools
+  # Mirror
   sudo zpool create -f -o ashift=12 tank mirror ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1269446 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E034TL
-  #Stripe
+  # Stripe
   sudo zpool create -f -o ashift=12 tank2 ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1285642 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E4VYK2
   
-  sudo zfs set compression=on tank
-  mkdir -p ~/data
-  mkdir -p ~/temp
-  #Perfomance and options for Shares -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed compression=on -o recordsize=1m
+  #RAIDZ
+  #sudo zpool create -f -o ashift=12 tank raidz ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1269446 ata-WDC_WD2000FYYZ-01UL1B1_WD-WCC1P1285642 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E4VYK2 ata-WDC_WD2000FYYZ-01UL1B2_WD-WMC1P0E034TL
+
+  # 2. Base Datasets
+  # We use -p here just in case the parent 'tank' or 'tank2' structure has issues, 
+  # though strictly speaking it's most useful for the child datasets below.
+  sudo zfs create -p -o mountpoint=/home/alex/data -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank/data
+  sudo zfs create -p -o mountpoint=/home/alex/temp -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank2/temp
+  
+   # 3. Optimized Large File Datasets (Recordsize 1M)
+  # ADDED -p HERE: This ensures that if 'tank/data' didn't exist for some reason, 
+  # this command would create it rather than failing.
+  # Perfomance and options for Shares -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed compression=on -o recordsize=1m
     #recordsize 	64KiB 	Smaller record sizes for databases (match the database block size)
     #recordsize 	128Kib 	Standard usage (mixture of file sizes)
     #recordsize 	1Mb 	Recommended for large files
+  sudo zfs create -p -o recordsize=1M tank/data/largefiles
+  sudo zfs create -p -o recordsize=1M tank2/temp/largefiles
   
-  # Base Datasets
-  sudo zfs create -o mountpoint=/home/alex/data -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank/data
-  sudo zfs create -o mountpoint=/home/alex/temp -o atime=off -o dnodesize=auto -o xattr=sa -o casesensitivity=mixed -o compression=on tank2/temp
-  # Optimized Large File Datasets (Recordsize 1M)
-  sudo zfs create -o recordsize=1M tank/data/largefiles
-  sudo zfs create -o recordsize=1M tank2/temp/largefiles
-  
-  # Permissions
-  sudo chown -cR alex:alex /home/alex/data
-  sudo chown -cR alex:alex /home/alex/temp
+  # 4. Permissions
+  sudo chown -R alex:alex /home/alex/data
+  sudo chown -R alex:alex /home/alex/temp
 
-SMB Shares
+# SMB Shares
   sudo apt install samba cifs-utils smbclient
   #add user
   sudo smbpasswd -a alex
