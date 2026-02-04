@@ -102,6 +102,7 @@ ZFS
     #recordsize 	1Mb 	Recommended for large files
   sudo zfs create -p -o recordsize=1M tank/data/largefiles
   sudo zfs create -p -o recordsize=1M tank2/temp/largefiles
+  sudo zfs set sync=disabled tank2/temp
   
   # 4. Permissions
   sudo chown -R alex:alex /home/alex/data
@@ -115,37 +116,85 @@ ZFS
   sudo pdbedit -w -L
 
   sudo nano /etc/samba/smb.conf
-  [data]
-    comment =data in zfs pool tank and dataset data
-    writeable = yes
-    path = /home/alex/data
-    guest ok = no
-    valid users = alex
-  # Rechte bei neuen Dateien/Verzeichnissen beschränken ("maskieren") & use alex >
-    create mask = 0664
-    directory mask = 0775
-    force user = alex
-  # Performance & Compatibility
-    strict locking = no
-    aio read size = 1
-    aio write size = 1
-    vfs objects = acl_xattr
+# ================= GLOBAL SETTINGS =================
+[global]
+   # --- Identification ---
+   workgroup = WORKGROUP
+   server role = standalone server
+   
+   # --- Network & Performance Optimizations ---
+   # Essential for 10GbE or high-speed WiFi
+   socket options = TCP_NODELAY IPTOS_LOWDELAY
+   
+   # Bypass CPU for file transfers (Direct Disk -> NIC)
+   use sendfile = yes
+   min receivefile size = 16384
+   
+   # Asynchronous I/O (Crucial for ZFS & Multitasking)
+   aio read size = 1
+   aio write size = 1
+   
+   # Disable strict locking for 10-20% write speed boost
+   strict locking = no
+   
+   # --- macOS & Metadata Compatibility ---
+   # These VFS modules speed up directory browsing on all clients
+   # by handling file metadata more efficiently.
+   vfs objects = catia fruit streams_xattr
+   fruit:metadata = stream
+   fruit:model = MacSamba
+   fruit:posix_rename = yes
+   fruit:veto_appledouble = no
+   fruit:wipe_intentionally_left_blank_rfork = yes
+   delete veto files = yes
 
-    [temp]
-    comment =data in zfs pool tank and dataset data
-    writeable = yes
-    path = /home/alex/temp
-    guest ok = no
-    valid users = alex
-  # Rechte bei neuen Dateien/Verzeichnissen beschränken ("maskieren") & use alex >
-    create mask = 0664
-    directory mask = 0775
-    force user = alex
-  # Performance & Compatibility
-    strict locking = no
-    aio read size = 1
-    aio write size = 1
-    vfs objects = acl_xattr
+   # --- Logging & Debugging ---
+   log file = /var/log/samba/%m.log
+   max log size = 50
+   logging = file
+   panic action = /usr/share/samba/panic-action %d
+
+   # --- Authentication ---
+   security = user
+   map to guest = Bad User
+   obey pam restrictions = yes
+   unix password sync = yes
+   passwd program = /usr/bin/passwd %u
+   passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\n *password\supdated\ssuccessfully* .
+   pam password change = yes
+
+# ================= SHARES =================
+
+[data]
+   comment = ZFS Mirror Pool (tank)
+   path = /home/alex/data
+   writeable = yes
+   browseable = yes
+   guest ok = no
+   valid users = alex
+   force user = alex
+   
+   # Permissions (Files: rw-rw-r-- / Dirs: rwxrwxr-x)
+   create mask = 0664
+   directory mask = 0775
+   
+   
+
+[temp]
+   comment = ZFS Stripe Pool (tank2) - High Speed/No Redundancy
+   path = /home/alex/temp
+   writeable = yes
+   browseable = yes
+   guest ok = no
+   valid users = alex
+   force user = alex
+   
+   create mask = 0664
+   directory mask = 0775
+   
+   # Performance: Disable sync for maximum stripe speed
+   # (Risk: lose 5s of data on power loss)
+   strict sync = no
 
   
   #reload config by 
